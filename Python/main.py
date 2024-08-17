@@ -57,12 +57,15 @@ class callgraph(object):
     @staticmethod
     def render():
         # Initialize the dot graph object
-        dotgraph = pydot.Dot("rc-graph", graph_type="digraph", strict=False)  # Create a directed graph named 'rc-graph'
-
+        dotgraph = pydot.Dot("rc-graph",graph_type="digraph",strict=False,fontsize="14",fontcolor="black")
+         # Create a directed graph named 'rc-graph'
+        dotgraph.set_node_defaults(shape="ellipse", style= "filled", fillcolor="lightblue", fontname="Arial")
+        dotgraph.set_edge_defaults(color="darkblue", style="dashed", arrowhead="vee")
         # Creating nodes
         for frame_id, node in callgraph.get_callers().items():  # Iterate through all stored function calls
             label = f"{node.fn_name}({node.argstr()})"  # Label the node with the function name and arguments
-            dotgraph.add_node(pydot.Node(frame_id, label=label, shape="Mrecord"))  # Add the node to the graph
+            dotgraph.add_node(pydot.Node(frame_id, label=f'<<TABLE><TR><TD>{label}</TD></TR></TABLE>>', shape="plaintext"))
+  # Add the node to the graph
 
         # Creating edges
         for frame_id, node in callgraph.get_callers().items():
@@ -126,10 +129,10 @@ class node_data(object):
         self.child_methods = []  # List to store child function calls
 
     def argstr(self):
-        # Convert arguments and keyword arguments to strings for display
-        s_args = ", ".join([str(arg) for arg in self.args])
-        s_kwargs = ", ".join([(str(k), str(v)) for (k, v) in self.kwargs.items()])
-        return f"{s_args}{s_kwargs}".replace("{", "\{").replace("}", "\}")
+      s_args = ", ".join([str(arg) for arg in self.args])
+      s_kwargs = ", ".join([(str(k), str(v)) for (k, v) in self.kwargs.items()])
+      return f"{s_args}{s_kwargs}".replace("{", "{{").replace("}", "}}")
+
 
 class viz(object):
     def __init__(self, wrapped):
@@ -200,3 +203,22 @@ def visualize(function_definition, function_call):
     exec(function_definition, globals())  # Execute the function definition
     eval(function_call)  # Evaluate the function call
     return callgraph.render()  # Return the rendered call graph
+def save_svg():
+    svg_content = visualize(
+        """
+def virfib(n):
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    else:
+        return virfib(n - 1) + virfib(n - 2)
+""", "virfib(4)"
+    )
+    (graph,) = pydot.graph_from_dot_data(svg_content)
+    svg_data = graph.create_svg().decode('utf-8')
+    print(svg_content)
+
+    # Write the SVG data to the file
+    with open("rendered/recursion_tree.svg", "w") as f:
+        f.write(svg_data)
