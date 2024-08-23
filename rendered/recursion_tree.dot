@@ -1,0 +1,53 @@
+digraph "rc-graph" {
+fontsize=14;
+fontcolor=black;
+node [shape=ellipse, style=filled, fillcolor=lightblue, fontname=Arial];
+edge [color=darkblue, style=dashed, arrowhead=vee];
+2014882271824 [label=<<TABLE><TR><TD>flatten([1, [2, [3, 4], 5], 6])</TD></TR></TABLE>>, shape=plaintext];
+2014882277536 [label=<<TABLE><TR><TD>flatten([[2, [3, 4], 5], 6])</TD></TR></TABLE>>, shape=plaintext];
+2014890017104 [label=<<TABLE><TR><TD>flatten([2, [3, 4], 5])</TD></TR></TABLE>>, shape=plaintext];
+2014890023904 [label=<<TABLE><TR><TD>flatten([[3, 4], 5])</TD></TR></TABLE>>, shape=plaintext];
+2014890031248 [label=<<TABLE><TR><TD>flatten([3, 4])</TD></TR></TABLE>>, shape=plaintext];
+2014890088080 [label=<<TABLE><TR><TD>flatten([4])</TD></TR></TABLE>>, shape=plaintext];
+2014890096512 [label=<<TABLE><TR><TD>flatten([])</TD></TR></TABLE>>, shape=plaintext];
+2014889679568 [label=<<TABLE><TR><TD>flatten([5])</TD></TR></TABLE>>, shape=plaintext];
+2014889687456 [label=<<TABLE><TR><TD>flatten([])</TD></TR></TABLE>>, shape=plaintext];
+2014889581264 [label=<<TABLE><TR><TD>flatten([6])</TD></TR></TABLE>>, shape=plaintext];
+2014889588064 [label=<<TABLE><TR><TD>flatten([])</TD></TR></TABLE>>, shape=plaintext];
+2014882271824 -> 2014882277536 [color=red, label="(#1)"];
+2014882277536 -> 2014890017104 [color=red, label="(#2)"];
+2014882277536 -> 2014889581264 [color=red, label="(#16)"];
+subgraph  {
+rank=same;
+2014890017104;
+2014889581264;
+2014890017104 -> 2014889581264;
+}
+
+2014890017104 -> 2014890023904 [color=red, label="(#3)"];
+2014890023904 -> 2014890031248 [color=red, label="(#4)"];
+2014890023904 -> 2014889679568 [color=red, label="(#10)"];
+subgraph  {
+rank=same;
+2014890031248;
+2014889679568;
+2014890031248 -> 2014889679568;
+}
+
+2014890031248 -> 2014890088080 [color=red, label="(#5)"];
+2014890088080 -> 2014890096512 [color=red, label="(#6)"];
+2014889679568 -> 2014889687456 [color=red, label="(#11)"];
+2014889581264 -> 2014889588064 [color=red, label="(#17)"];
+2014882271824 -> 2014882277536 [dir=back, label="[2, 3, 4, 5, 6] (#20)", color=green, headport=c];
+99999999 [shape=Mrecord, label=Result];
+99999999 -> 2014882271824 [dir=back, label="[1, 2, 3, 4, 5, 6] (#21)", color=Green, headport=c];
+2014882277536 -> 2014890017104 [dir=back, label="[2, 3, 4, 5] (#15)", color=green, headport=c];
+2014882277536 -> 2014889581264 [dir=back, label="[6] (#19)", color=green, headport=c];
+2014890017104 -> 2014890023904 [dir=back, label="[3, 4, 5] (#14)", color=green, headport=c];
+2014890023904 -> 2014890031248 [dir=back, label="[3, 4] (#9)", color=green, headport=c];
+2014890023904 -> 2014889679568 [dir=back, label="[5] (#13)", color=green, headport=c];
+2014890031248 -> 2014890088080 [dir=back, label="[4] (#8)", color=green, headport=c];
+2014890088080 -> 2014890096512 [dir=back, label="[] (#7)", color=green, headport=c];
+2014889679568 -> 2014889687456 [dir=back, label="[] (#12)", color=green, headport=c];
+2014889581264 -> 2014889588064 [dir=back, label="[] (#18)", color=green, headport=c];
+}

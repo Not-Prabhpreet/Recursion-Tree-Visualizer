@@ -3,6 +3,7 @@ import inspect
 import copy
 from typing import Dict, List, Any
 import pydot
+import os
 
 # Define maximum frames and maximum time limits
 MAX_FRAMES = 1000
@@ -31,6 +32,7 @@ class callgraph(object):
         callgraph._counter = 1
         callgraph._unwindcounter = 1
         callgraph._step = 1
+        callgraph._frames = []
 
     @staticmethod
     def get_callers():
@@ -56,69 +58,75 @@ class callgraph(object):
 
     @staticmethod
     def render():
-        # Initialize the dot graph object
-        dotgraph = pydot.Dot("rc-graph",graph_type="digraph",strict=False,fontsize="14",fontcolor="black")
-         # Create a directed graph named 'rc-graph'
-        dotgraph.set_node_defaults(shape="ellipse", style= "filled", fillcolor="lightblue", fontname="Arial")
-        dotgraph.set_edge_defaults(color="darkblue", style="dashed", arrowhead="vee")
-        # Creating nodes
-        for frame_id, node in callgraph.get_callers().items():  # Iterate through all stored function calls
-            label = f"{node.fn_name}({node.argstr()})"  # Label the node with the function name and arguments
-            dotgraph.add_node(pydot.Node(frame_id, label=f'<<TABLE><TR><TD>{label}</TD></TR></TABLE>>', shape="plaintext"))
-  # Add the node to the graph
+        try:
+            # Initialize the dot graph object
+            dotgraph = pydot.Dot("rc-graph", graph_type="digraph", strict=False, fontsize="14", fontcolor="black")
+            # Create a directed graph named 'rc-graph'
+            dotgraph.set_node_defaults(shape="ellipse", style="filled", fillcolor="lightblue", fontname="Arial")
+            dotgraph.set_edge_defaults(color="darkblue", style="dashed", arrowhead="vee")
+            
+            # Creating nodes
+            for frame_id, node in callgraph.get_callers().items():
+                label = f"{node.fn_name}({node.argstr()})"
+                dotgraph.add_node(pydot.Node(frame_id, label=f'<<TABLE><TR><TD>{label}</TD></TR></TABLE>>', shape="plaintext"))
 
-        # Creating edges
-        for frame_id, node in callgraph.get_callers().items():
-            child_nodes = []  # List to keep track of child function calls (those invoked by the current function)
-            for child_id, counter in node.child_methods:  # Iterate through all child methods for the current function
-                child_nodes.append(child_id)  # Add child ID to the list
-                label = f"(#{counter})"  # Label the edge with the order of the child function call
-                dotgraph.add_edge(pydot.Edge(frame_id, child_id, color="red", label=label))  # Add edge between parent and child function calls
+            # Creating edges
+            for frame_id, node in callgraph.get_callers().items():
+                child_nodes = []
+                for child_id, counter in node.child_methods:
+                    child_nodes.append(child_id)
+                    label = f"(#{counter})"
+                    dotgraph.add_edge(pydot.Edge(frame_id, child_id, color="red", label=label))
 
-            # Order edges from left to right
-            if len(child_nodes) > 1:  # If there are multiple child nodes, arrange them left to right
-                subgraph = pydot.Subgraph(rank="same")
-                prev_node = None
-                for child_node in child_nodes:
-                    subgraph.add_node(pydot.Node(child_node))  # Add each child node to the subgraph
-                    if prev_node:
-                        subgraph.add_edge(pydot.Edge(prev_node, child_node))  # Add edges between consecutive child nodes
-                    prev_node = child_node
-                dotgraph.add_subgraph(subgraph)  # Add the subgraph to the main graph
+                # Order edges from left to right
+                if len(child_nodes) > 1:
+                    subgraph = pydot.Subgraph(rank="same")
+                    prev_node = None
+                    for child_node in child_nodes:
+                        subgraph.add_node(pydot.Node(child_node))
+                        if prev_node:
+                            subgraph.add_edge(pydot.Edge(prev_node, child_node))
+                        prev_node = child_node
+                    dotgraph.add_subgraph(subgraph)
 
-        parent_frame = None
-        for frame_id, node in callgraph.get_callers().items():
-            for child_id, counter in node.child_methods:  # Iterate through child methods
-                child_node = callgraph.get_callers().get(child_id)  # Get the child node data
-                if child_node and child_node.ret is not None:  # If there's a return value
-                    ret_label = f"{child_node.ret} (#{child_node.ret_step})"
-                    dotgraph.add_edge(
-                        pydot.Edge(
-                            frame_id,
-                            child_id,
-                            dir="back",  # Create an edge pointing back to represent return
-                            label=ret_label,
-                            color="green",
-                            headport="c",
+            parent_frame = None
+            for frame_id, node in callgraph.get_callers().items():
+                for child_id, counter in node.child_methods:
+                    child_node = callgraph.get_callers().get(child_id)
+                    if child_node and child_node.ret is not None:
+                        ret_label = f"{child_node.ret} (#{child_node.ret_step})"
+                        dotgraph.add_edge(
+                            pydot.Edge(
+                                frame_id,
+                                child_id,
+                                dir="back",
+                                label=ret_label,
+                                color="green",
+                                headport="c",
+                            )
                         )
-                    )
-            if parent_frame is None:
-                parent_frame = frame_id  # Set the initial parent frame
-                if node.ret is not None:  # If the node has a return value
-                    ret_label = f"{node.ret} (#{node.ret_step})"
-                    dotgraph.add_node(pydot.Node(99999999, shape="Mrecord", label="Result"))  # Create a "Result" node
-                    dotgraph.add_edge(
-                        pydot.Edge(
-                            99999999,
-                            frame_id,
-                            dir="back",
-                            label=ret_label,
-                            color="Green",
-                            headport="c",
+                if parent_frame is None:
+                    parent_frame = frame_id
+                    if node.ret is not None:
+                        ret_label = f"{node.ret} (#{node.ret_step})"
+                        dotgraph.add_node(pydot.Node(99999999, shape="Mrecord", label="Result"))
+                        dotgraph.add_edge(
+                            pydot.Edge(
+                                99999999,
+                                frame_id,
+                                dir="back",
+                                label=ret_label,
+                                color="Green",
+                                headport="c",
+                            )
                         )
-                    )
 
-        return dotgraph.to_string()  # Return the final graph as a string
+            dot_string = dotgraph.to_string()
+            print(f"Dot string generated (first 500 chars): {dot_string[:500]}")
+            return dot_string
+        except Exception as e:
+            print(f"Error in callgraph.render: {str(e)}")
+            raise
 
 class node_data(object):
     def __init__(self, _args=None, _kwargs=None, _fn_name=""):
@@ -129,10 +137,9 @@ class node_data(object):
         self.child_methods = []  # List to store child function calls
 
     def argstr(self):
-      s_args = ", ".join([str(arg) for arg in self.args])
-      s_kwargs = ", ".join([(str(k), str(v)) for (k, v) in self.kwargs.items()])
-      return f"{s_args}{s_kwargs}".replace("{", "{{").replace("}", "}}")
-
+        s_args = ", ".join([str(arg) for arg in self.args])
+        s_kwargs = ", ".join([f"{k}={v}" for k, v in self.kwargs.items()])
+        return f"{s_args}{', ' if s_args and s_kwargs else ''}{s_kwargs}".replace("{", "{{").replace("}", "}}")
 
 class viz(object):
     def __init__(self, wrapped):
@@ -142,7 +149,6 @@ class viz(object):
         self.start_time = time()  # Record the start time
 
     def __call__(self, *args, **kwargs):
-
         g_callers = callgraph.get_callers()
         g_frames = callgraph.get_frames()
 
@@ -171,10 +177,10 @@ class viz(object):
 
         if len(g_frames) > self.max_frames:  # Raise an exception if there are too many frames
             raise TooManyFramesError(
-                f"Encountered more than ${self.max_time} seconds to run function"
+                f"Encountered more than {self.max_frames} frames while running function"
             )
         if (time() - self.start_time) > self.max_time:  # Raise an exception if the function takes too long
-            raise TooMuchTimeError(f"Took more than ${self.max_time} seconds to run function")
+            raise TooMuchTimeError(f"Took more than {self.max_time} seconds to run function")
 
         # Invoke the wrapped function
         ret = self.wrapped(*args, **kwargs)
@@ -197,28 +203,51 @@ def decorate_funcs(func_source: str):
     return "\n".join(outlines)
 
 def visualize(function_definition, function_call):
-    """Either returns generated SVG or generates an error."""
-    callgraph.reset()
-    function_definition = decorate_funcs(function_definition)
-    exec(function_definition, globals())  # Execute the function definition
-    eval(function_call)  # Evaluate the function call
-    return callgraph.render()  # Return the rendered call graph
-def save_svg():
+    print(f"Received function definition: {function_definition}")
+    print(f"Received function call: {function_call}")
+    try:
+        callgraph.reset()
+        function_definition = decorate_funcs(function_definition)
+        print(f"Decorated function definition: {function_definition}")
+        exec(function_definition, globals())
+        print("Function definition executed successfully")
+        result = eval(function_call)
+        print(f"Function call result: {result}")
+        dot_content = callgraph.render()
+        print(f"Generated dot content (first 500 chars): {dot_content[:500]}")
+        print(f"Dot content type: {type(dot_content)}")
+        print(f"Dot content length: {len(dot_content)}")
+        return dot_content
+    except Exception as e:
+        print(f"Error in visualize function: {str(e)}")
+        raise
+
+def save_svg(filename="recursion_tree.svg"):
     svg_content = visualize(
         """
-def virfib(n):
-    if n == 0:
-        return 0
+def hanoi(n, source, target, auxiliary):
     if n == 1:
-        return 1
-    else:
-        return virfib(n - 1) + virfib(n - 2)
-""", "virfib(4)"
+        print(f"Move disk 1 from {source} to {target}")
+        return
+    hanoi(n - 1, source, auxiliary, target)
+    print(f"Move disk {n} from {source} to {target}")
+    hanoi(n - 1, auxiliary, target, source)
+""", "hanoi(3, 'A', 'C', 'B')"
     )
+
     (graph,) = pydot.graph_from_dot_data(svg_content)
     svg_data = graph.create_svg().decode('utf-8')
-    print(svg_content)
 
-    # Write the SVG data to the file
-    with open("rendered/recursion_tree.svg", "w") as f:
+    # Ensure the 'rendered' folder exists
+    rendered_folder = os.path.join(os.getcwd(), 'rendered')
+    os.makedirs(rendered_folder, exist_ok=True)
+
+    # Save the file in the rendered folder
+    file_path = os.path.join(rendered_folder, filename)
+    with open(file_path, "w") as f:
         f.write(svg_data)
+
+    print(f"SVG saved at: {file_path}")
+
+if __name__ == "__main__":
+    save_svg()
