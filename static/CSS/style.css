@@ -1,37 +1,166 @@
 body {
   font-family: Arial, sans-serif;
+  line-height: 1.6;
   margin: 0;
   padding: 20px;
+  background-color: #f4f4f4;
 }
 
 .container {
   max-width: 800px;
   margin: 0 auto;
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
   text-align: center;
+  color: #333;
 }
 
 #input-section {
   margin-bottom: 20px;
 }
 
-label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-textarea, input {
+#function-definition,
+#function-call {
   width: 100%;
-  padding: 5px;
+  padding: 10px;
   margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
-button {
-  padding: 10px 20px;
+#function-definition {
+  height: 100px;
+  resize: vertical;
+}
+
+#visualize-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#visualize-btn:hover {
+  background-color: #45a049;
+}
+
+#output-section {
+  margin-top: 20px;
 }
 
 #svg-container {
-  text-align: center;
+  overflow-x: auto;
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+.svg-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.svg-controls button,
+.svg-controls input {
+  margin: 0 5px;
+}
+
+.svg-controls input[type="range"] {
+  width: 50%;
+}
+
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.node rect {
+  stroke: #333;
+  fill: #fff;
+}
+
+.edgePath path {
+  stroke: #333;
+  fill: #333;
+  stroke-width: 1.5px;
+}
+
+.activated {
+  stroke: #ff0000 !important;
+  stroke-width: 2px !important;
+}
+
+.svg-controls input[type="range"] {
+  flex-grow: 1;
+  max-width: 300px;
+}
+
+.activated {
+  stroke: #e74c3c !important;
+  stroke-width: 2px !important;
+}
+
+svg {
+  max-width: 100%;
+  height: auto;
+}
+/* ... (existing styles) */
+
+.node rect {
+  stroke: #00695c;
+  fill: #e0f2f1;
+}
+
+.edgePath path {
+  stroke: #00897b;
+  stroke-width: 2px;
+}
+
+.activated {
+  stroke: #ff5722 !important;
+  stroke-width: 3px !important;
+}
+
+.svg-controls {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.svg-controls button {
+  background-color: #00897b;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin: 0 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.svg-controls button:disabled {
+  background-color: #b2dfdb;
+  cursor: not-allowed;
+}
+
+.svg-controls input[type="range"] {
+  width: 50%;
+  margin: 0 10px;
+}
+
+#svg-container {
+  overflow-x: auto;
+  border: 1px solid #b2dfdb;
+  padding: 20px;
+  margin-top: 20px;
+  background-color: #ffffff;
 }

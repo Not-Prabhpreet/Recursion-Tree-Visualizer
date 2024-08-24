@@ -61,14 +61,14 @@ class callgraph(object):
         try:
             # Initialize the dot graph object
             dotgraph = pydot.Dot("rc-graph", graph_type="digraph", strict=False, fontsize="14", fontcolor="black")
-            # Create a directed graph named 'rc-graph'
-            dotgraph.set_node_defaults(shape="ellipse", style="filled", fillcolor="lightblue", fontname="Arial")
-            dotgraph.set_edge_defaults(color="darkblue", style="dashed", arrowhead="vee")
+            dotgraph.set_rankdir("TB")  # TB for top to bottom, or LR for left to right
+            dotgraph.set_node_defaults(shape="rect", style="filled,rounded", fillcolor="#E0F2F1", fontname="Arial", fontcolor="#004D40", margin="0.2,0.1")
+            dotgraph.set_edge_defaults(color="#00897B", style="solid", arrowhead="vee")
             
             # Creating nodes
             for frame_id, node in callgraph.get_callers().items():
                 label = f"{node.fn_name}({node.argstr()})"
-                dotgraph.add_node(pydot.Node(frame_id, label=f'<<TABLE><TR><TD>{label}</TD></TR></TABLE>>', shape="plaintext"))
+                dotgraph.add_node(pydot.Node(frame_id, label=label, shape="rect", style="filled,rounded"))
 
             # Creating edges
             for frame_id, node in callgraph.get_callers().items():
@@ -109,7 +109,7 @@ class callgraph(object):
                     parent_frame = frame_id
                     if node.ret is not None:
                         ret_label = f"{node.ret} (#{node.ret_step})"
-                        dotgraph.add_node(pydot.Node(99999999, shape="Mrecord", label="Result"))
+                        dotgraph.add_node(pydot.Node(99999999, shape="rect", style="filled,rounded", fillcolor="#B2DFDB", label="Result", fontcolor="#004D40"))
                         dotgraph.add_edge(
                             pydot.Edge(
                                 99999999,

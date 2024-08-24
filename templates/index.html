@@ -1,28 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recursion Tree Visualization</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
-    <script src="https://unpkg.com/viz.js@1.8.1/viz.js"></script>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recursion Visualizer</title>
+    <link rel="stylesheet" href="/static/CSS/style.css" />
+  </head>
+  <body>
     <div class="container">
-        <h1>Recursion Tree Visualization</h1>
-        <div id="input-section">
-            <label for="function-definition">Function Definition:</label>
-            <textarea id="function-definition" rows="10" cols="50"></textarea>
-            <label for="function-call">Function Call:</label>
-            <input type="text" id="function-call">
-            <button id="visualize-btn">Visualize</button>
-        </div>
-        <div id="output-section">
-            <h2>Visualization:</h2>
-            <div id="error-message" style="display: none; color: red;"></div>
-            <div id="svg-container"></div>
-        </div>
+      <h1>Recursion Visualizer</h1>
+      <div id="input-section">
+        <textarea
+          id="function-definition"
+          placeholder="Enter function definition"
+        ></textarea>
+        <input
+          type="text"
+          id="function-call"
+          placeholder="Enter function call"
+        />
+        <button id="visualize-btn">Visualize</button>
+      </div>
+      <div id="output-section">
+        <div id="error-message"></div>
+        <div id="svg-container"></div>
+      </div>
     </div>
-    <script src="/static/js/script.js"></script>
-</body>
+    <script src="https://unpkg.com/viz.js@1.8.1/viz.js"></script>
+    <script src="/static/JS/recursive-tree-viz.js"></script>
+    <script src="/static/JS/script.js"></script>
+  </body>
 </html>
