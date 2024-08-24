@@ -5,6 +5,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const svgContainer = document.getElementById("svg-container");
   const errorMessage = document.getElementById("error-message");
 
+  const darkModeToggle = document.getElementById("dark-mode-toggle");
+
+  darkModeToggle.addEventListener("change", function () {
+  document.body.classList.toggle("dark-mode");
+  });
   visualizeBtn.addEventListener("click", function () {
     const functionDefinitionValue = functionDefinition.value;
     const functionCallValue = functionCall.value;
