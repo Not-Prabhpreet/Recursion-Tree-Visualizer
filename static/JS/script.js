@@ -1,4 +1,43 @@
 document.addEventListener("DOMContentLoaded", function () {
+  const functionSelect = document.getElementById("function-select");
+
+const predefinedFunctions = {
+  factorial: {
+    definition: `def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    else:
+        return n * factorial(n-1)`,
+    call: "factorial(5)"
+  },
+  fibonacci: {
+    definition: `def fibonacci(n):
+    if n <= 1:
+        return n
+    else:
+        return fibonacci(n-1) + fibonacci(n-2)`,
+    call: "fibonacci(4)"
+  },
+  hanoi: {
+    definition: `def hanoi(n, source, target, auxiliary):
+    if n > 0:
+        hanoi(n - 1, source, auxiliary, target)
+        print(f"Move disk {n} from {source} to {target}")
+        hanoi(n - 1, auxiliary, target, source)`,
+    call: 'hanoi(3, "A", "C", "B")'
+  }
+};
+
+functionSelect.addEventListener("change", function() {
+  const selectedFunction = predefinedFunctions[this.value];
+  if (selectedFunction) {
+    functionDefinition.value = selectedFunction.definition;
+    functionCall.value = selectedFunction.call;
+  } else {
+    functionDefinition.value = "";
+    functionCall.value = "";
+  }
+});
   const functionDefinition = document.getElementById("function-definition");
   const functionCall = document.getElementById("function-call");
   const visualizeBtn = document.getElementById("visualize-btn");

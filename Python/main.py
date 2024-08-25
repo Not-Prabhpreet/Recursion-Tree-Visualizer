@@ -71,23 +71,23 @@ class callgraph(object):
                 dotgraph.add_node(pydot.Node(frame_id, label=label, shape="rect", style="filled,rounded"))
 
             # Creating edges
+            # Creating edges
             for frame_id, node in callgraph.get_callers().items():
-                child_nodes = []
                 for child_id, counter in node.child_methods:
-                    child_nodes.append(child_id)
                     label = f"(#{counter})"
-                    dotgraph.add_edge(pydot.Edge(frame_id, child_id, color="red", label=label))
+                    dotgraph.add_edge(pydot.Edge(frame_id, child_id, color="#00897B", label=label))
 
+            # Remove the subgraph creation for ordering edges left to right
                 # Order edges from left to right
-                if len(child_nodes) > 1:
-                    subgraph = pydot.Subgraph(rank="same")
-                    prev_node = None
-                    for child_node in child_nodes:
-                        subgraph.add_node(pydot.Node(child_node))
-                        if prev_node:
-                            subgraph.add_edge(pydot.Edge(prev_node, child_node))
-                        prev_node = child_node
-                    dotgraph.add_subgraph(subgraph)
+                #if len(child_nodes) > 1:
+                    #subgraph = pydot.Subgraph(rank="same")
+                    #prev_node = None
+                    #for child_node in child_nodes:
+                        #subgraph.add_node(pydot.Node(child_node))
+                        #if prev_node:
+                            #subgraph.add_edge(pydot.Edge(prev_node, child_node))
+                        #prev_node = child_node
+                    #dotgraph.add_subgraph(subgraph)
 
             parent_frame = None
             for frame_id, node in callgraph.get_callers().items():

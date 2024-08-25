@@ -25,9 +25,12 @@ def visualize_route():
 
     try:
         dot_content = visualize(function_definition, function_call)
-        graph, = pydot.graph_from_dot_data(dot_content)
-        svg_content = graph.create_svg().decode('utf-8')
-        return jsonify({"svg": svg_content})
+        try:
+            graph, = pydot.graph_from_dot_data(dot_content)
+            svg_content = graph.create_svg().decode('utf-8')
+            return jsonify({"svg": svg_content})
+        except (ValueError, IndexError):
+            return jsonify({"error": "Error generating visualization. Please check your input."}), 400
     except Exception as e:
         error_message = f"Error in visualize_route: {str(e)}\n{traceback.format_exc()}"
         print(error_message)
