@@ -1,6 +1,6 @@
 from flask import Flask, render_template, send_file, request, jsonify, abort
 import os
-from .main import visualize  # Note the dot here for relative import
+from Python.main import visualize  # Note the dot here for relative import
 import traceback
 import pydot
 
