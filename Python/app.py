@@ -1,11 +1,10 @@
-from flask import Flask, render_template, send_file, request, jsonify
+from flask import Flask, render_template, send_file, request, jsonify, abort
 import os
-from main import visualize
+from .main import visualize  # Note the dot here for relative import
 import traceback
 import pydot
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
-
 @app.route('/')
 def index():
     return render_template('index.html')
