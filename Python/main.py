@@ -59,37 +59,33 @@ class callgraph(object):
     @staticmethod
     def render():
         try:
-            # Initialize the dot graph object
+        # Initialize the dot graph object
             dotgraph = pydot.Dot("rc-graph", graph_type="digraph", strict=False, fontsize="14", fontcolor="black")
             dotgraph.set_rankdir("TB")  # TB for top to bottom, or LR for left to right
             dotgraph.set_node_defaults(shape="rect", style="filled,rounded", fillcolor="#E0F2F1", fontname="Arial", fontcolor="#004D40", margin="0.2,0.1")
             dotgraph.set_edge_defaults(color="#00897B", style="solid", arrowhead="vee")
-            
-            # Creating nodes
+        
+        # Creating nodes
             for frame_id, node in callgraph.get_callers().items():
                 label = f"{node.fn_name}({node.argstr()})"
                 dotgraph.add_node(pydot.Node(frame_id, label=label, shape="rect", style="filled,rounded"))
 
-            # Creating edges
-            # Creating edges
+        # Creating edges
             for frame_id, node in callgraph.get_callers().items():
                 for child_id, counter in node.child_methods:
                     label = f"(#{counter})"
-                    dotgraph.add_edge(pydot.Edge(frame_id, child_id, color="#00897B", label=label))
+                    dotgraph.add_edge(pydot.Edge(frame_id, child_id, color="red", label=label))
 
-            # Remove the subgraph creation for ordering edges left to right
-                # Order edges from left to right
-                #if len(child_nodes) > 1:
-                    #subgraph = pydot.Subgraph(rank="same")
-                    #prev_node = None
-                    #for child_node in child_nodes:
-                        #subgraph.add_node(pydot.Node(child_node))
-                        #if prev_node:
-                            #subgraph.add_edge(pydot.Edge(prev_node, child_node))
-                        #prev_node = child_node
-                    #dotgraph.add_subgraph(subgraph)
+        # Highlight edges representing function calls with a darker shade of red
+            for frame_id, node in callgraph.get_callers().items():
+                for child_id, counter in node.child_methods:
+                    edge = dotgraph.get_edge(str(frame_id), str(child_id))
+                    if edge:
+                        edge.set_color("darkred")
+                        edge.set_penwidth(2)
 
-            parent_frame = None
+            parent_frame = None  # Initialize parent_frame to None
+
             for frame_id, node in callgraph.get_callers().items():
                 for child_id, counter in node.child_methods:
                     child_node = callgraph.get_callers().get(child_id)
@@ -103,23 +99,23 @@ class callgraph(object):
                                 label=ret_label,
                                 color="green",
                                 headport="c",
-                            )
                         )
+                    )
                 if parent_frame is None:
                     parent_frame = frame_id
                     if node.ret is not None:
                         ret_label = f"{node.ret} (#{node.ret_step})"
                         dotgraph.add_node(pydot.Node(99999999, shape="rect", style="filled,rounded", fillcolor="#B2DFDB", label="Result", fontcolor="#004D40"))
                         dotgraph.add_edge(
-                            pydot.Edge(
-                                99999999,
-                                frame_id,
-                                dir="back",
-                                label=ret_label,
-                                color="Green",
-                                headport="c",
-                            )
+                        pydot.Edge(
+                            99999999,
+                            frame_id,
+                            dir="back",
+                            label=ret_label,
+                            color="Green",
+                            headport="c",
                         )
+                    )
 
             dot_string = dotgraph.to_string()
             print(f"Dot string generated (first 500 chars): {dot_string[:500]}")
@@ -127,7 +123,6 @@ class callgraph(object):
         except Exception as e:
             print(f"Error in callgraph.render: {str(e)}")
             raise
-
 class node_data(object):
     def __init__(self, _args=None, _kwargs=None, _fn_name=""):
         self.args = _args  # Store the function arguments
