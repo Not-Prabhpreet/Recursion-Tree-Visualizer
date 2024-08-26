@@ -61,7 +61,7 @@ This project is containerized using Docker. To run it using Docker:
 
 ## Usage
 
-1. Select a recursive algorithm from the dropdown menu
+1. Select a recursive algorithm from the dropdown menu or type your own recursive definition in Python
 2. Enter the required input parameters
 3. Click "Visualize" to generate the recursion tree
 4. Use the controls to step through the recursive calls
