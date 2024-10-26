@@ -197,22 +197,46 @@ def decorate_funcs(func_source: str):
         outlines.append(line)
     return "\n".join(outlines)
 
-def visualize(function_definition, function_call):
+def visualize(function_definition: str, function_call: str):
     print(f"Received function definition: {function_definition}")
     print(f"Received function call: {function_call}")
     try:
         callgraph.reset()
+        
+        # Extract function name from definition
+        function_name = function_definition.split('def ')[1].split('(')[0].strip()
+        
+        # Extract function name from call
+        call_name = function_call.split('(')[0].strip()
+        
+        # Check if function names match
+        if function_name != call_name:
+            raise ValueError(f"Function call '{call_name}' doesn't match the defined function name '{function_name}'")
+            
         function_definition = decorate_funcs(function_definition)
         print(f"Decorated function definition: {function_definition}")
-        exec(function_definition, globals())
-        print("Function definition executed successfully")
-        result = eval(function_call)
+        
+        # Execute the function definition
+        try:
+            exec(function_definition, globals())
+        except SyntaxError as e:
+            raise ValueError(f"Invalid function definition syntax: {str(e)}")
+        except Exception as e:
+            raise ValueError(f"Error in function definition: {str(e)}")
+            
+        # Execute the function call
+        try:
+            result = eval(function_call)
+        except NameError:
+            raise ValueError(f"Function '{call_name}' not found. Make sure the function name in your call matches the defined function.")
+        except Exception as e:
+            raise ValueError(f"Error in function call: {str(e)}")
+            
         print(f"Function call result: {result}")
+        
         dot_content = callgraph.render()
-        print(f"Generated dot content (first 500 chars): {dot_content[:500]}")
-        print(f"Dot content type: {type(dot_content)}")
-        print(f"Dot content length: {len(dot_content)}")
         return dot_content
+        
     except Exception as e:
         print(f"Error in visualize function: {str(e)}")
         raise
