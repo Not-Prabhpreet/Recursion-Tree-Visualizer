@@ -4,9 +4,9 @@
   --text-color: #333;
   --input-bg-color: white;
   --input-border-color: #ddd;
-  --button-bg-color: #4caf50;
-  --button-text-color: white;
-  --button-hover-bg-color: #45a049;
+  --button-bg-color: #333;  /* Change this to white */
+  --button-text-color: #fff;  /* Dark text */
+  --button-hover-bg-color: #444;  /* Dark on hover */
   --node-stroke-color: #00695c;
   --node-fill-color: #e0f2f1;
   --edge-stroke-color: #00897b;
@@ -19,9 +19,9 @@
   --text-color: #f0f0f0;
   --input-bg-color: #444;
   --input-border-color: #666;
-  --button-bg-color: #45a049;
-  --button-text-color: #f0f0f0;
-  --button-hover-bg-color: #4caf50;
+  --button-bg-color: #fff;
+  --button-text-color: #222;
+  --button-hover-bg-color: #eee;
   --node-stroke-color: #b2dfdb;
   --node-fill-color: #004d40;
   --edge-stroke-color: #80cbc4;
@@ -45,7 +45,8 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-h1, h2 {
+h1,
+h2 {
   color: var(--text-color);
 }
 
@@ -92,32 +93,6 @@ h2:nth-of-type(2) {
 
 #function-select option {
   background-color: var(--container-bg-color);
-}
-
-#visualize-btn {
-  display: inline-block;
-  width: auto;
-  max-width: none;
-  margin: 20px 0;
-  padding: 12px 20px;
-  background-color: var(--button-bg-color);
-  color: var(--button-text-color);
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  font-weight: bold;
-  text-align: center;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-#visualize-btn:hover {
-  background-color: var(--button-hover-bg-color);
-}
-
-#visualize-btn:active {
-  transform: scale(0.98);
 }
 
 #output-section {
@@ -203,21 +178,21 @@ h2:nth-of-type(2) {
   right: 0;
   bottom: 0;
   background-color: #f4f4f5;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 30px;
 }
 
 .slider:before {
   position: absolute;
   content: "";
-  height: var(--size-of-icon,1.4em);
-  width: var(--size-of-icon,1.4em);
+  height: var(--size-of-icon, 1.4em);
+  width: var(--size-of-icon, 1.4em);
   border-radius: 20px;
-  left: var(--slider-offset,0.3em);
+  left: var(--slider-offset, 0.3em);
   top: 50%;
   transform: translateY(-50%);
-  background: linear-gradient(40deg,#ff0080,#ff8c00 70%);
-  transition: .4s;
+  background: linear-gradient(40deg, #ff0080, #ff8c00 70%);
+  transition: 0.4s;
 }
 
 input:checked + .slider {
@@ -225,7 +200,7 @@ input:checked + .slider {
 }
 
 input:checked + .slider:before {
-  left: calc(100% - (var(--size-of-icon,1.4em) + var(--slider-offset,0.3em)));
+  left: calc(100% - (var(--size-of-icon, 1.4em) + var(--slider-offset, 0.3em)));
   background: #303136;
   box-shadow: inset -3px -2px 5px -2px #8983f7, inset -10px -4px 0 0 #a3dafb;
 }
@@ -236,12 +211,92 @@ input:checked + .slider:before {
 }
 
 /* For mobile responsiveness */
-@media (max-width: 768px) {
-  #visualize-btn {
-    font-size: 14px;
-    padding: 10px 16px;
-    /* Ensure it doesn't stretch full width on mobile */
-    width: auto;
-    display: inline-block;
+#visualize-btn {
+  display: inline-block;
+  width: auto;
+  max-width: none;
+  margin: 20px 0;
+  padding: 12px 20px;
+  background-color: #333;  /* Black in light mode */
+  color: #fff;  /* White text */
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#visualize-btn:hover {
+  background-color: #444;  /* Slightly lighter black on hover */
+}
+
+/* Dark mode styles */
+.dark-mode #visualize-btn {
+  background-color: #fff;  /* White in dark mode */
+  color: #222;  /* Dark text */
+}
+
+.dark-mode #visualize-btn:hover {
+  background-color: #eee;  /* Slightly darker white on hover */
+}
+.footer {
+  text-align: center;
+  padding: 20px;
+  margin-top: 40px;
+  border-top: 1px solid var(--input-border-color);
+  color: var(--text-color);
+}
+
+.feedback-message, .links-message {
+  margin: 8px 0;
+  font-size: 14px;
+  color: var(--text-color);
+  opacity: 0.9;
+}
+
+.footer a {
+  color: var(--text-color);
+  text-decoration: underline;
+  transition: opacity 0.3s ease;
+}
+
+.footer a:hover {
+  opacity: 0.7;
+}
+
+.copyright {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.heart {
+  color: #e25555;
+  display: inline-block;
+  animation: heartbeat 1.5s ease infinite;
+}
+
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
   }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Ensure footer stays at bottom when content is short */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  flex: 1;
 }

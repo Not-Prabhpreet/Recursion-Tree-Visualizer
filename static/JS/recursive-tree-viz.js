@@ -4,7 +4,10 @@ class RecursiveTreeViz {
     this.steps = [];
     this.frames = {};
     this.currentStep = 0;
+    this.currentScale = 1;
+    
   }
+  
 
   draw() {
     // Store all the frames
@@ -13,6 +16,7 @@ class RecursiveTreeViz {
       const frame = frames[i];
       const frameId = frame.querySelector("title").textContent;
       this.frames[frameId] = frame;
+      
     }
 
     // Determine number of steps

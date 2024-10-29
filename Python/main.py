@@ -59,29 +59,29 @@ class callgraph(object):
     @staticmethod
     def render():
         try:
-        # Initialize the dot graph object
+            # Initialize the dot graph object
             dotgraph = pydot.Dot("rc-graph", graph_type="digraph", strict=False, fontsize="14", fontcolor="black")
             dotgraph.set_rankdir("TB")  # TB for top to bottom, or LR for left to right
             dotgraph.set_node_defaults(shape="rect", style="filled,rounded", fillcolor="#E0F2F1", fontname="Arial", fontcolor="#004D40", margin="0.2,0.1")
             dotgraph.set_edge_defaults(color="#00897B", style="solid", arrowhead="vee")
         
-        # Creating nodes
+            # Creating nodes
             for frame_id, node in callgraph.get_callers().items():
                 label = f"{node.fn_name}({node.argstr()})"
                 dotgraph.add_node(pydot.Node(frame_id, label=label, shape="rect", style="filled,rounded"))
 
-        # Creating edges
+            # Creating edges
             for frame_id, node in callgraph.get_callers().items():
                 for child_id, counter in node.child_methods:
                     label = f"(#{counter})"
-                    dotgraph.add_edge(pydot.Edge(frame_id, child_id, color="red", label=label))
-
-        # Highlight edges representing function calls with a darker shade of red
+                    dotgraph.add_edge(pydot.Edge(frame_id, child_id, color="#0077cc", label=label))
+                    
+            # Highlight edges representing function calls with a darker blue
             for frame_id, node in callgraph.get_callers().items():
                 for child_id, counter in node.child_methods:
                     edge = dotgraph.get_edge(str(frame_id), str(child_id))
                     if edge:
-                        edge.set_color("darkred")
+                        edge.set_color("#005299")
                         edge.set_penwidth(2)
 
             parent_frame = None  # Initialize parent_frame to None
@@ -97,25 +97,25 @@ class callgraph(object):
                                 child_id,
                                 dir="back",
                                 label=ret_label,
-                                color="green",
+                                color="#6b21a8",  # Purple for return edges
                                 headport="c",
+                            )
                         )
-                    )
                 if parent_frame is None:
                     parent_frame = frame_id
                     if node.ret is not None:
                         ret_label = f"{node.ret} (#{node.ret_step})"
                         dotgraph.add_node(pydot.Node(99999999, shape="rect", style="filled,rounded", fillcolor="#B2DFDB", label="Result", fontcolor="#004D40"))
                         dotgraph.add_edge(
-                        pydot.Edge(
-                            99999999,
-                            frame_id,
-                            dir="back",
-                            label=ret_label,
-                            color="Green",
-                            headport="c",
+                            pydot.Edge(
+                                99999999,
+                                frame_id,
+                                dir="back",
+                                label=ret_label,
+                                color="#6b21a8",  # Purple for consistency
+                                headport="c",
+                            )
                         )
-                    )
 
             dot_string = dotgraph.to_string()
             print(f"Dot string generated (first 500 chars): {dot_string[:500]}")

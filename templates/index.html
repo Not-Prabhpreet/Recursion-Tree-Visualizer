@@ -11,21 +11,27 @@
       <h1>Recursion Visualizer</h1>
       <div class="dark-mode-toggle-container">
         <label class="switch">
-          <input type="checkbox" id="dark-mode-toggle">
+          <input type="checkbox" id="dark-mode-toggle" />
           <span class="slider"></span>
         </label>
       </div>
-        
+
       <div id="input-section">
         <h2>Visualize one of the classic recursive functions</h2>
         <select id="function-select">
-        <option value="">Choose a classic function</option>
-        <option value="factorial">Factorial</option>
-        <option value="fibonacci">Fibonacci</option>
-        <option value="hanoi">Tower of Hanoi</option>
+          <option value="">Choose a classic function</option>
+          <option value="factorial">Factorial</option>
+          <option value="fibonacci">Fibonacci</option>
+          <option value="tail_fibonacci">Tail Recursive Fibonacci</option>
+          <option value="hanoi">Tower of Hanoi</option>
+          <option value="binary_search">Binary Search</option>
+          <option value="merge_sort">Merge Sort</option>
+          <option value="gcd">Greatest Common Divisor</option>
+          <option value="sum_natural">Sum of Natural Numbers</option>
+          <option value="power">Power Function</option>
         </select>
 
-      <h2>OR</h2>
+        <h2>OR</h2>
 
         <h2>Visualize your very own recursive function written in Python</h2>
         <textarea
@@ -44,6 +50,25 @@
         <div id="svg-container"></div>
       </div>
     </div>
+    <footer class="footer">
+      <p class="feedback-message">
+        Do you find this tool helpful? Share your experience at
+        <a href="mailto:prabhcms@gmail.com">prabhcms@gmail.com</a>
+      </p>
+      <p class="links-message">
+        View the
+        <a
+          href="https://github.com/Not-Prabhpreet/Recursion-Tree-Visualizer"
+          target="_blank"
+          >source code</a
+        >
+        on GitHub
+      </p>
+      <p>Copyright © 2024 • Made with <span class="heart">❤️</span> by Prabh</p>
+    </footer>
+    <script>
+      console.log("Page loaded");
+    </script>
     <script src="https://unpkg.com/viz.js@1.8.1/viz.js"></script>
     <script src="/static/JS/recursive-tree-viz.js"></script>
     <script src="/static/JS/script.js"></script>

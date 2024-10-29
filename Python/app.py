@@ -30,10 +30,16 @@ def visualize_route():
             return jsonify({"svg": svg_content})
         except (ValueError, IndexError):
             return jsonify({"error": "Error generating visualization. Please check your input."}), 400
+    except NameError as e:
+        # More user-friendly error message for function name mismatches
+        error_msg = str(e)
+        if "is not defined" in error_msg:
+            return jsonify({"error": "Function name in the call doesn't match the defined function name."}), 400
+        return jsonify({"error": error_msg}), 400
     except Exception as e:
-        error_message = f"Error in visualize_route: {str(e)}\n{traceback.format_exc()}"
-        print(error_message)
-        return jsonify({"error": error_message}), 400
+        error_message = str(e)  # Simplified error message
+        print(f"Error in visualize_route: {error_message}\n{traceback.format_exc()}")
+        return jsonify({"error": f"Error: {error_message}"}), 400
 
 #if __name__ == '__main__':
     #port = int(os.environ.get("PORT", 5000))
